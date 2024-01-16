@@ -1,0 +1,22 @@
+# input the following command in terminal 
+sudo htpasswd -c /(path to your directory)/.htpasswd (your_username)
+
+# input the following command in terminal 
+sudo nano /etc/httpd/conf/httpd.conf
+
+# input into the '/etc/httpd/conf/httpd.conf' file 
+<Directory "/(path to your directory)">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+    AuthType Basic
+    AuthName "Restricted Access"
+    AuthUserFile /var/www/html/Lima-Trucks-Files/.htpasswd
+    Require valid-user
+</Directory>
+
+#refresh and test\
+sudo systemctl restart httpd
+
+
