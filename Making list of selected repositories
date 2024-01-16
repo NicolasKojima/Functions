@@ -1,0 +1,80 @@
+
+========== make controller ==========
+php artisan make:controller ProjectListingController
+
+========== paste in Controller ==========
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\File;
+
+class ProjectListingController extends Controller
+{
+    public function index()
+    {
+        $directories = [
+            'app', 'public', 'config', 'database', 'resources', 'routes'
+        ];
+
+        $list = [];
+
+        foreach ($directories as $directory) {
+            $basePath = base_path($directory);
+            $list = array_merge($list, $this->getDirectoryListing($basePath, $directory));
+        }
+
+        return view('project-listing', compact('list'));
+    }
+
+     private function getDirectoryListing($directory, $prefix = '')
+  {
+      $list = [];
+  
+      $directories = File::directories($directory);
+      $files = File::files($directory);
+  
+      foreach ($directories as $dir) {
+          $relativePath = str_replace($directory, '', $dir);
+          $relativePath = ltrim($relativePath, DIRECTORY_SEPARATOR);
+          $list[] = $prefix . '/' . $relativePath;
+          $list = array_merge($list, $this->getDirectoryListing($dir, $prefix . '/' . $relativePath));
+      }
+  
+      foreach ($files as $file) {
+          $relativePath = str_replace($directory, '', $file);
+          $relativePath = ltrim($relativePath, DIRECTORY_SEPARATOR);
+          $list[] = $prefix . '/' . $relativePath;
+      }
+  
+      return $list;
+  }
+
+}
+
+========== make a blade file in resources/views/ called project-listing.blade.php ==========
+
+========== input this code into the above mentioned blade (project-listing.blade.php) ==========
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Listing</title>
+</head>
+<body>
+    <h1>Project Listing</h1>
+    
+    <ul>
+        @foreach($list as $item)
+            <li>{{ $item }}</li>
+        @endforeach
+    </ul>
+</body>
+</html>
+
+========== add this code to your routes file  ==========
+use App\Http\Controllers\ProjectListingController;
+
+Route::get('/project-listing', [ProjectListingController::class, 'index']);
+
