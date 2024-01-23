@@ -1,0 +1,43 @@
+## make a php file where you want to store the display 
+
+## put this code into the file <?php
+
+// Path to the ssl_access_log file
+$logFilePath = '/path/to/log/file';
+
+// Read the content of the log file
+$logContent = file_get_contents($logFilePath);
+
+// Split log entries by newline
+$logEntries = explode("\n", $logContent);
+
+// Initialize an array to store unique IP addresses categorized by date
+$ipAddressesByDate = [];
+
+// Loop through each log entry
+foreach ($logEntries as $logEntry) {
+    // Extract date and IP address from the log entry
+    if (preg_match('/^(\S+) - - \[([^\]]+)\]/', $logEntry, $matches)) {
+        $ipAddress = $matches[1];
+        $date = date('Y-m-d', strtotime($matches[2]));
+
+        // Store the IP address in the array if it's not already present
+        if (!isset($ipAddressesByDate[$date])) {
+            $ipAddressesByDate[$date] = [];
+        }
+
+        if (!in_array($ipAddress, $ipAddressesByDate[$date])) {
+            $ipAddressesByDate[$date][] = $ipAddress;
+        }
+    }
+}
+
+// Display the results
+foreach ($ipAddressesByDate as $date => $ipAddresses) {
+    echo "<strong>Date: $date</strong><br>";
+    echo implode(", ", $ipAddresses) . "<br><br>";
+}
+
+## restart server
+sudo systemctl restart httpd  
+
