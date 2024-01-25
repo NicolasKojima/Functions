@@ -1,0 +1,39 @@
+#Copy your laravel project and place into /var/www/html path of httpd server
+
+#make a conf file for your project in /etc/httpd/conf.d/(nameofproject).conf
+  configure it as such:
+  <VirtualHost *:80>
+    DocumentRoot /var/www/html/(name of proj)
+    ServerName (name of server)
+
+    <Directory /var/www/html/(name of proj)>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+</VirtualHost>
+
+#configure your .env file in your laravel project
+as such:
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=(name of db table)
+DB_USERNAME=(username)
+DB_PASSWORD=(password)
+
+#composer install
+
+#composer update
+
+#php artisan key:generate
+
+#php artisan storage:link
+
+#php artisan migrate 
+
+
+
+
+
